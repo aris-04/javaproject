@@ -3,7 +3,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Random;
 
-public class app {
+public class StudentLoginSignup {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Student Portal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
