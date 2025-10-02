@@ -10,11 +10,9 @@ public class StudentLoginSignup {
         frame.setSize(500, 500); 
         frame.setLocationRelativeTo(null);
 
-        // Window icon
-        ImageIcon image = new ImageIcon("logo1.png"); // replace with your path
+        ImageIcon image = new ImageIcon("logo1.png"); 
         frame.setIconImage(image.getImage());
 
-        // --- Main panel with GridBagLayout ---
         JPanel mainPanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -22,15 +20,12 @@ public class StudentLoginSignup {
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(10, 10, 10, 10);
 
-        // --- Load original logo ---
         ImageIcon logoIcon = new ImageIcon("logo1.png");
         Image originalLogo = logoIcon.getImage();
 
-        // JLabel for logo
         JLabel logoLabel = new JLabel();
         logoLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        // --- Form components ---
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints fc = new GridBagConstraints();
         fc.insets = new Insets(5,5,5,5);
@@ -47,7 +42,6 @@ public class StudentLoginSignup {
         JLabel enterCaptchaLabel = new JLabel("Enter CAPTCHA:");
         JTextField captchaInput = new JTextField();
 
-        // Add to form panel
         fc.gridx = 0; fc.gridy = 0; formPanel.add(userLabel, fc);
         fc.gridx = 1; fc.gridy = 0; formPanel.add(userField, fc);
         fc.gridx = 0; fc.gridy = 1; formPanel.add(passLabel, fc);
@@ -57,7 +51,6 @@ public class StudentLoginSignup {
         fc.gridx = 0; fc.gridy = 3; formPanel.add(enterCaptchaLabel, fc);
         fc.gridx = 1; fc.gridy = 3; formPanel.add(captchaInput, fc);
 
-        // --- Buttons ---
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints bc = new GridBagConstraints();
         bc.insets = new Insets(5, 10, 5, 10);
@@ -72,7 +65,6 @@ public class StudentLoginSignup {
         bc.gridx = 1; buttonPanel.add(cancelBtn, bc);
         bc.gridx = 2; buttonPanel.add(signupBtn, bc);
 
-        // --- Add components to main panel ---
         c.gridy = 0; c.weighty = 0.2; mainPanel.add(logoLabel, c);
         c.gridy = 1; c.weighty = 0.5; mainPanel.add(formPanel, c);
         c.gridy = 2; c.weighty = 0.1; mainPanel.add(buttonPanel, c);
@@ -81,11 +73,9 @@ public class StudentLoginSignup {
         frame.add(mainPanel);
         frame.setVisible(true);
 
-        // --- In-memory users ---
         HashMap<String, String> users = new HashMap<>();
         users.put("admin", "1234");
 
-        // --- Dynamic resizing ---
         Runnable resizeUI = () -> {
             int frameWidth = frame.getWidth();
             int logoWidth = frameWidth / 4;
@@ -93,7 +83,6 @@ public class StudentLoginSignup {
             Image scaledLogo = originalLogo.getScaledInstance(logoWidth, logoHeight, Image.SCALE_SMOOTH);
             logoLabel.setIcon(new ImageIcon(scaledLogo));
 
-            // Scale fonts proportionally
             int fontSize = Math.max(frameWidth / 30, 12); // min font size 12
             Font labelFont = new Font("SansSerif", Font.PLAIN, fontSize);
             Font captchaFont = new Font("SansSerif", Font.BOLD, fontSize);
@@ -110,17 +99,14 @@ public class StudentLoginSignup {
             signupBtn.setFont(labelFont);
         };
 
-        // Initial sizing
         resizeUI.run();
 
-        // Listener for dynamic resizing
         frame.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 resizeUI.run();
             }
         });
 
-        // --- Button actions ---
         loginBtn.addActionListener(e -> {
             String username = userField.getText();
             String password = new String(passField.getPassword());
