@@ -1,5 +1,5 @@
-create database student
-use student
+CREATE DATABASE student
+USE student
 
 CREATE TABLE Login (
     username VARCHAR(50),
