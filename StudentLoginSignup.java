@@ -4,16 +4,27 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class StudentLoginSignup {
+
+    private static final Color DARK_BLUE = new Color(20, 30, 48);
+    private static final Color BLACK = new Color(0, 0, 0);
+    private static final Color BLUE_ACCENT = new Color(60, 90, 150);
+    private static final Color DARK_BG_CONTROL = new Color(30, 30, 30);
+    private static final Color DARK_TABLE_BG = new Color(40, 50, 70);
+    private static final Color LIGHT_TEXT = new Color(173, 216, 230);
+    private static final Color INACTIVE_SELECTION_COLOR = new Color(35, 35, 35);
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("Student Portal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500); 
+        frame.setSize(500, 500);
         frame.setLocationRelativeTo(null);
+        frame.getContentPane().setBackground(DARK_BLUE);
 
-        ImageIcon image = new ImageIcon("logo1.png"); 
+        ImageIcon image = new ImageIcon("logo1.png");
         frame.setIconImage(image.getImage());
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBackground(DARK_BLUE);
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.fill = GridBagConstraints.BOTH;
@@ -27,20 +38,38 @@ public class StudentLoginSignup {
         logoLabel.setHorizontalAlignment(JLabel.CENTER);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(DARK_BG_CONTROL);
         GridBagConstraints fc = new GridBagConstraints();
         fc.insets = new Insets(5,5,5,5);
         fc.fill = GridBagConstraints.HORIZONTAL;
         fc.weightx = 1.0;
 
         JLabel userLabel = new JLabel("Username:");
+        userLabel.setForeground(LIGHT_TEXT);
         JTextField userField = new JTextField();
+        userField.setBackground(INACTIVE_SELECTION_COLOR);
+        userField.setForeground(LIGHT_TEXT);
+
         JLabel passLabel = new JLabel("Password:");
+        passLabel.setForeground(LIGHT_TEXT);
         JPasswordField passField = new JPasswordField();
+        passField.setBackground(INACTIVE_SELECTION_COLOR);
+        passField.setForeground(LIGHT_TEXT);
+
         JLabel captchaLabel = new JLabel("CAPTCHA:");
+        captchaLabel.setForeground(LIGHT_TEXT);
         String captchaCode = generateCaptcha();
         JLabel captchaTextLabel = new JLabel(captchaCode);
+        captchaTextLabel.setForeground(BLUE_ACCENT);
+        captchaTextLabel.setOpaque(true);
+        captchaTextLabel.setBackground(DARK_TABLE_BG);
+        captchaTextLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
         JLabel enterCaptchaLabel = new JLabel("Enter CAPTCHA:");
+        enterCaptchaLabel.setForeground(LIGHT_TEXT);
         JTextField captchaInput = new JTextField();
+        captchaInput.setBackground(INACTIVE_SELECTION_COLOR);
+        captchaInput.setForeground(LIGHT_TEXT);
 
         fc.gridx = 0; fc.gridy = 0; formPanel.add(userLabel, fc);
         fc.gridx = 1; fc.gridy = 0; formPanel.add(userField, fc);
@@ -52,14 +81,21 @@ public class StudentLoginSignup {
         fc.gridx = 1; fc.gridy = 3; formPanel.add(captchaInput, fc);
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setBackground(DARK_BLUE);
         GridBagConstraints bc = new GridBagConstraints();
         bc.insets = new Insets(5, 10, 5, 10);
         bc.fill = GridBagConstraints.HORIZONTAL;
         bc.weightx = 1.0;
 
         JButton loginBtn = new JButton("Login");
+        loginBtn.setBackground(DARK_TABLE_BG);
+        loginBtn.setForeground(LIGHT_TEXT);
         JButton cancelBtn = new JButton("Cancel");
+        cancelBtn.setBackground(DARK_TABLE_BG);
+        cancelBtn.setForeground(LIGHT_TEXT);
         JButton signupBtn = new JButton("Sign Up");
+        signupBtn.setBackground(DARK_TABLE_BG);
+        signupBtn.setForeground(LIGHT_TEXT);
 
         bc.gridx = 0; buttonPanel.add(loginBtn, bc);
         bc.gridx = 1; buttonPanel.add(cancelBtn, bc);
@@ -83,7 +119,7 @@ public class StudentLoginSignup {
             Image scaledLogo = originalLogo.getScaledInstance(logoWidth, logoHeight, Image.SCALE_SMOOTH);
             logoLabel.setIcon(new ImageIcon(scaledLogo));
 
-            int fontSize = Math.max(frameWidth / 30, 12); // min font size 12
+            int fontSize = Math.max(frameWidth / 30, 12);
             Font labelFont = new Font("SansSerif", Font.PLAIN, fontSize);
             Font captchaFont = new Font("SansSerif", Font.BOLD, fontSize);
             userLabel.setFont(labelFont);
@@ -100,7 +136,6 @@ public class StudentLoginSignup {
         };
 
         resizeUI.run();
-
         frame.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 resizeUI.run();
@@ -144,13 +179,13 @@ public class StudentLoginSignup {
             JPasswordField confirmPassField = new JPasswordField();
 
             Object[] signupFields = {
-                "New Username:", newUserField,
-                "New Password:", newPassField,
-                "Confirm Password:", confirmPassField
+                    "New Username:", newUserField,
+                    "New Password:", newPassField,
+                    "Confirm Password:", confirmPassField
             };
 
             int option = JOptionPane.showConfirmDialog(
-                frame, signupFields, "Sign Up", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    frame, signupFields, "Sign Up", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if (option == JOptionPane.OK_OPTION) {
                 String newUser = newUserField.getText();
