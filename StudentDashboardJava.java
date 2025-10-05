@@ -5,6 +5,11 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+
 
 public class StudentDashboardJava extends JFrame {
 
@@ -21,29 +26,32 @@ public class StudentDashboardJava extends JFrame {
     private static final Color LIGHT_TEXT = new Color(173, 216, 230);
     private static final Color INACTIVE_SELECTION_COLOR = new Color(35, 35, 35); 
     
-    public StudentDashboardJava() {
+    public StudentDashboardJava(String name, String regNumber, String course, Object[][] gradesData) {
         setTitle("Student Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700); 
-        
-        setFrameIcon("icon.png"); 
-        
+        setSize(1000, 700);
+
+        setFrameIcon("icon.png");
+
         JPanel gradientPanel = createGradientPanel();
 
         JPanel rootLayout = new JPanel(new BorderLayout(15, 15));
         rootLayout.setOpaque(false);
-        rootLayout.setBorder(new EmptyBorder(20, 20, 20, 20)); 
+        rootLayout.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         rootLayout.add(createSidebarPanel(), BorderLayout.WEST);
         rootLayout.add(createMainContentPanel(), BorderLayout.CENTER);
-        
+
         this.setContentPane(gradientPanel);
         gradientPanel.add(rootLayout, BorderLayout.CENTER);
 
-        loadDummyData();
-        setLocationRelativeTo(null); 
+        // ✅ Load actual student data instead of dummy
+        loadStudentData(name, regNumber, course, gradesData);
+
+        setLocationRelativeTo(null);
         setVisible(true);
     }
+
     
     private void setFrameIcon(String path) {
         try {
@@ -269,14 +277,50 @@ public class StudentDashboardJava extends JFrame {
         }
     }
 
-    private void loadDummyData() {
-        Object[][] dummyGrades = {
-            {"Mathematics", "O"},
-            {"Computer Science", "A+"},
-            {"Technical Writing", "A"}
-        };
-        loadStudentData("John Doe", "123456", "Engineering", dummyGrades);
+
+    private void loadStudentFromDatabase(int studentId) {
+        try (Connection conn = DBConnection.getConnection()) {
+
+            // 1. Fetch student details
+            String studentQuery = "SELECT name, student_id, course FROM StudentDetails WHERE student_id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(studentQuery)) {
+                ps.setInt(1, studentId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String name = rs.getString("name");
+                        String regNumber = String.valueOf(rs.getInt("student_id"));
+                        String course = rs.getString("course");
+
+                        // 2. Fetch grades
+                        String gradeQuery = "SELECT subject_name, grade FROM Grade WHERE student_id = ?";
+                        try (PreparedStatement gradeStmt = conn.prepareStatement(gradeQuery)) {
+                            gradeStmt.setInt(1, studentId);
+                            try (ResultSet gradeRs = gradeStmt.executeQuery()) {
+
+                                java.util.List<Object[]> gradesData = new java.util.ArrayList<>();
+                                while (gradeRs.next()) {
+                                    gradesData.add(new Object[]{
+                                        gradeRs.getString("subject_name"),
+                                        gradeRs.getString("grade")
+                                    });
+                                }
+
+                                // Load into dashboard
+                                loadStudentData(name, regNumber, course, gradesData.toArray(new Object[0][]));
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No student found with ID: " + studentId);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading student data: " + e.getMessage());
+        }
     }
+
 
     public static void main(String[] args) {
         try {
@@ -301,6 +345,19 @@ public class StudentDashboardJava extends JFrame {
             System.err.println("Theme setup failed: " + e.getMessage());
         }
         
-        SwingUtilities.invokeLater(StudentDashboardJava::new);
+        //SwingUtilities.invokeLater(StudentDashboardJava::new);
+        Object[][] gradesData = {
+        	    {"Mathematics", "O"},
+        	    {"Computer Science", "A+"},
+        	    {"Technical Writing", "A"}
+        	};
+
+        	String name = "John Doe";
+        	String regNumber = "123456";
+        	String course = "Engineering";
+
+        	SwingUtilities.invokeLater(() -> new StudentDashboardJava(name, regNumber, course, gradesData));
+
+
     }
 }
