@@ -2,124 +2,130 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Random;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 
 public class StudentLoginSignup {
-
-    private static final Color DARK_BLUE = new Color(20, 30, 48);
-    private static final Color BLACK = new Color(0, 0, 0);
-    private static final Color BLUE_ACCENT = new Color(60, 90, 150);
-    private static final Color DARK_BG_CONTROL = new Color(30, 30, 30);
-    private static final Color DARK_TABLE_BG = new Color(40, 50, 70);
-    private static final Color LIGHT_TEXT = new Color(173, 216, 230);
-    private static final Color INACTIVE_SELECTION_COLOR = new Color(35, 35, 35);
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Student Portal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
         frame.setLocationRelativeTo(null);
-        frame.getContentPane().setBackground(DARK_BLUE);
 
-        ImageIcon image = new ImageIcon("logo1.png");
+        // Window icon
+        ImageIcon image = new ImageIcon("logo1.png"); // replace with your path
         frame.setIconImage(image.getImage());
 
+        // --- Main panel with GridBagLayout ---
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(DARK_BLUE);
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(10, 10, 10, 10);
 
+        // --- Load original logo ---
         ImageIcon logoIcon = new ImageIcon("logo1.png");
         Image originalLogo = logoIcon.getImage();
 
+        // JLabel for logo
         JLabel logoLabel = new JLabel();
         logoLabel.setHorizontalAlignment(JLabel.CENTER);
 
+        // --- Form components ---
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(DARK_BG_CONTROL);
         GridBagConstraints fc = new GridBagConstraints();
-        fc.insets = new Insets(5,5,5,5);
+        fc.insets = new Insets(5, 5, 5, 5);
         fc.fill = GridBagConstraints.HORIZONTAL;
         fc.weightx = 1.0;
 
         JLabel userLabel = new JLabel("Username:");
-        userLabel.setForeground(LIGHT_TEXT);
         JTextField userField = new JTextField();
-        userField.setBackground(INACTIVE_SELECTION_COLOR);
-        userField.setForeground(LIGHT_TEXT);
-
         JLabel passLabel = new JLabel("Password:");
-        passLabel.setForeground(LIGHT_TEXT);
         JPasswordField passField = new JPasswordField();
-        passField.setBackground(INACTIVE_SELECTION_COLOR);
-        passField.setForeground(LIGHT_TEXT);
-
         JLabel captchaLabel = new JLabel("CAPTCHA:");
-        captchaLabel.setForeground(LIGHT_TEXT);
         String captchaCode = generateCaptcha();
         JLabel captchaTextLabel = new JLabel(captchaCode);
-        captchaTextLabel.setForeground(BLUE_ACCENT);
-        captchaTextLabel.setOpaque(true);
-        captchaTextLabel.setBackground(DARK_TABLE_BG);
-        captchaTextLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
         JLabel enterCaptchaLabel = new JLabel("Enter CAPTCHA:");
-        enterCaptchaLabel.setForeground(LIGHT_TEXT);
         JTextField captchaInput = new JTextField();
-        captchaInput.setBackground(INACTIVE_SELECTION_COLOR);
-        captchaInput.setForeground(LIGHT_TEXT);
 
-        fc.gridx = 0; fc.gridy = 0; formPanel.add(userLabel, fc);
-        fc.gridx = 1; fc.gridy = 0; formPanel.add(userField, fc);
-        fc.gridx = 0; fc.gridy = 1; formPanel.add(passLabel, fc);
-        fc.gridx = 1; fc.gridy = 1; formPanel.add(passField, fc);
-        fc.gridx = 0; fc.gridy = 2; formPanel.add(captchaLabel, fc);
-        fc.gridx = 1; fc.gridy = 2; formPanel.add(captchaTextLabel, fc);
-        fc.gridx = 0; fc.gridy = 3; formPanel.add(enterCaptchaLabel, fc);
-        fc.gridx = 1; fc.gridy = 3; formPanel.add(captchaInput, fc);
+        // Add to form panel
+        fc.gridx = 0;
+        fc.gridy = 0;
+        formPanel.add(userLabel, fc);
+        fc.gridx = 1;
+        fc.gridy = 0;
+        formPanel.add(userField, fc);
+        fc.gridx = 0;
+        fc.gridy = 1;
+        formPanel.add(passLabel, fc);
+        fc.gridx = 1;
+        fc.gridy = 1;
+        formPanel.add(passField, fc);
+        fc.gridx = 0;
+        fc.gridy = 2;
+        formPanel.add(captchaLabel, fc);
+        fc.gridx = 1;
+        fc.gridy = 2;
+        formPanel.add(captchaTextLabel, fc);
+        fc.gridx = 0;
+        fc.gridy = 3;
+        formPanel.add(enterCaptchaLabel, fc);
+        fc.gridx = 1;
+        fc.gridy = 3;
+        formPanel.add(captchaInput, fc);
 
+        // --- Buttons ---
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.setBackground(DARK_BLUE);
         GridBagConstraints bc = new GridBagConstraints();
         bc.insets = new Insets(5, 10, 5, 10);
         bc.fill = GridBagConstraints.HORIZONTAL;
         bc.weightx = 1.0;
 
         JButton loginBtn = new JButton("Login");
-        loginBtn.setBackground(DARK_TABLE_BG);
-        loginBtn.setForeground(LIGHT_TEXT);
         JButton cancelBtn = new JButton("Cancel");
-        cancelBtn.setBackground(DARK_TABLE_BG);
-        cancelBtn.setForeground(LIGHT_TEXT);
         JButton signupBtn = new JButton("Sign Up");
-        signupBtn.setBackground(DARK_TABLE_BG);
-        signupBtn.setForeground(LIGHT_TEXT);
 
-        bc.gridx = 0; buttonPanel.add(loginBtn, bc);
-        bc.gridx = 1; buttonPanel.add(cancelBtn, bc);
-        bc.gridx = 2; buttonPanel.add(signupBtn, bc);
+        bc.gridx = 0;
+        buttonPanel.add(loginBtn, bc);
+        bc.gridx = 1;
+        buttonPanel.add(cancelBtn, bc);
+        bc.gridx = 2;
+        buttonPanel.add(signupBtn, bc);
 
-        c.gridy = 0; c.weighty = 0.2; mainPanel.add(logoLabel, c);
-        c.gridy = 1; c.weighty = 0.5; mainPanel.add(formPanel, c);
-        c.gridy = 2; c.weighty = 0.1; mainPanel.add(buttonPanel, c);
-        c.gridy = 3; c.weighty = 0.2; mainPanel.add(Box.createVerticalGlue(), c);
+        // --- Add components to main panel ---
+        c.gridy = 0;
+        c.weighty = 0.2;
+        mainPanel.add(logoLabel, c);
+        c.gridy = 1;
+        c.weighty = 0.5;
+        mainPanel.add(formPanel, c);
+        c.gridy = 2;
+        c.weighty = 0.1;
+        mainPanel.add(buttonPanel, c);
+        c.gridy = 3;
+        c.weighty = 0.2;
+        mainPanel.add(Box.createVerticalGlue(), c);
 
         frame.add(mainPanel);
         frame.setVisible(true);
 
+        // --- In-memory users ---
         HashMap<String, String> users = new HashMap<>();
         users.put("admin", "1234");
 
+        // --- Dynamic resizing ---
         Runnable resizeUI = () -> {
             int frameWidth = frame.getWidth();
             int logoWidth = frameWidth / 4;
-            int logoHeight = (int)(originalLogo.getHeight(null) * ((double)logoWidth / originalLogo.getWidth(null)));
+            int logoHeight = (int) (originalLogo.getHeight(null) * ((double) logoWidth / originalLogo.getWidth(null)));
             Image scaledLogo = originalLogo.getScaledInstance(logoWidth, logoHeight, Image.SCALE_SMOOTH);
             logoLabel.setIcon(new ImageIcon(scaledLogo));
 
-            int fontSize = Math.max(frameWidth / 30, 12);
+            // Scale fonts proportionally
+            int fontSize = Math.max(frameWidth / 30, 12); // min font size 12
             Font labelFont = new Font("SansSerif", Font.PLAIN, fontSize);
             Font captchaFont = new Font("SansSerif", Font.BOLD, fontSize);
             userLabel.setFont(labelFont);
@@ -135,13 +141,17 @@ public class StudentLoginSignup {
             signupBtn.setFont(labelFont);
         };
 
+        // Initial sizing
         resizeUI.run();
+
+        // Listener for dynamic resizing
         frame.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 resizeUI.run();
             }
         });
 
+        // --- Button actions ---
         loginBtn.addActionListener(e -> {
             String username = userField.getText();
             String password = new String(passField.getPassword());
@@ -158,12 +168,69 @@ public class StudentLoginSignup {
                 return;
             }
 
-            if (!users.containsKey(username)) {
-                JOptionPane.showMessageDialog(frame, "User not found! Please sign up first.");
-            } else if (!users.get(username).equals(password)) {
-                JOptionPane.showMessageDialog(frame, "Incorrect password!");
-            } else {
-                JOptionPane.showMessageDialog(frame, "Login successful! Welcome " + username);
+            try (Connection conn = DBConnection.getConnection()) {
+                if (conn == null) {
+                    JOptionPane.showMessageDialog(frame, "Database connection failed!");
+                    return;
+                }
+
+                // 1. Validate login
+                String loginQuery = "SELECT * FROM Login WHERE username=? AND password=?";
+                try (PreparedStatement pst = conn.prepareStatement(loginQuery)) {
+                    pst.setString(1, username);
+                    pst.setString(2, password);
+
+                    try (ResultSet rs = pst.executeQuery()) {
+                        if (!rs.next()) {
+                            JOptionPane.showMessageDialog(frame, "Invalid username or password!");
+                            return;
+                        }
+                    }
+                }
+
+                // 2. Get student details using username
+                String studentQuery = "SELECT student_id, name, course FROM StudentDetails WHERE username=?";
+                int studentId = -1;
+                String name = "";
+                String course = "";
+
+                try (PreparedStatement pst = conn.prepareStatement(studentQuery)) {
+                    pst.setString(1, username);
+
+                    try (ResultSet rs = pst.executeQuery()) {
+                        if (rs.next()) {
+                            studentId = rs.getInt("student_id");
+                            name = rs.getString("name");
+                            course = rs.getString("course");
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "Student details not found!");
+                            return;
+                        }
+                    }
+                }
+
+                // 3. Fetch grades
+                String gradesQuery = "SELECT subject_name, grade FROM Grade WHERE student_id=?";
+                java.util.List<Object[]> gradesList = new java.util.ArrayList<>();
+
+                try (PreparedStatement pst = conn.prepareStatement(gradesQuery)) {
+                    pst.setInt(1, studentId);
+
+                    try (ResultSet rs = pst.executeQuery()) {
+                        while (rs.next()) {
+                            gradesList.add(new Object[]{rs.getString("subject_name"), rs.getString("grade")});
+                        }
+                    }
+                }
+
+                // 4. Open dashboard
+                StudentDashboardJava dashboard = new StudentDashboardJava(name, String.valueOf(studentId), course,
+                        gradesList.toArray(new Object[0][]));
+                frame.dispose(); // close login window
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage());
             }
         });
 
@@ -179,9 +246,9 @@ public class StudentLoginSignup {
             JPasswordField confirmPassField = new JPasswordField();
 
             Object[] signupFields = {
-                    "New Username:", newUserField,
-                    "New Password:", newPassField,
-                    "Confirm Password:", confirmPassField
+                "New Username:", newUserField,
+                "New Password:", newPassField,
+                "Confirm Password:", confirmPassField
             };
 
             int option = JOptionPane.showConfirmDialog(
@@ -194,16 +261,33 @@ public class StudentLoginSignup {
 
                 if (newUser.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
                     JOptionPane.showMessageDialog(frame, "All fields are required!");
-                } else if (users.containsKey(newUser)) {
-                    JOptionPane.showMessageDialog(frame, "Username already exists!");
                 } else if (!newPass.equals(confirmPass)) {
                     JOptionPane.showMessageDialog(frame, "Passwords do not match!");
                 } else {
-                    users.put(newUser, newPass);
-                    JOptionPane.showMessageDialog(frame, "Sign Up successful! You can now login.");
+                    // --- Insert into database ---
+                    try (Connection conn = DBConnection.getConnection()) {
+                        if (conn == null) {
+                            JOptionPane.showMessageDialog(frame, "Database connection failed!");
+                            return;
+                        }
+
+                        String insertQuery = "INSERT INTO Login (username, password) VALUES (?, ?)";
+                        try (PreparedStatement pst = conn.prepareStatement(insertQuery)) {
+                            pst.setString(1, newUser);
+                            pst.setString(2, newPass);
+                            pst.executeUpdate();
+                        }
+
+                        JOptionPane.showMessageDialog(frame, "Sign Up successful! You can now login.");
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage());
+                    }
                 }
             }
         });
+
     }
 
     private static String generateCaptcha() {
